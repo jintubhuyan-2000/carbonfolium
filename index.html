@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="css/L.Control.Locate.min.css">
         <link rel="stylesheet" href="css/qgis2web.css">
         <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
         <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
@@ -39,6 +40,7 @@
         <script src="js/labels.js"></script>
         <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
         <script src="js/leaflet-measure.js"></script>
+        <script src="js/leaflet-search.js"></script>
         <script src="data/EastSingbhumVillage_26.js"></script>
         <script>
         var highlightLayer;
@@ -59,7 +61,7 @@
         }
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[22.14471035976048,85.62717620672457],[23.11103566178925,87.47264847160697]]);
+        }).fitBounds([[22.172046455183892,85.65007713947877],[23.048876894141273,87.32528958577377]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -423,7 +425,8 @@
                         <td colspan="2">' + (feature.properties['STATE'] !== null ? autolinker.link(feature.properties['STATE'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['DISTRICT'] !== null ? autolinker.link(feature.properties['DISTRICT'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">DISTRICT</th>\
+                        <td class="visible-with-data" id="DISTRICT">' + (feature.properties['DISTRICT'] !== null ? autolinker.link(feature.properties['DISTRICT'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['SUB_DIST'] !== null ? autolinker.link(feature.properties['SUB_DIST'].toLocaleString()) : '') + '</td>\
@@ -1104,15 +1107,15 @@
             {label: "Light Gray", layer: layer_LightGray_11, radioGroup: 'bm' },
             {label: "Dark Gray", layer: layer_DarkGray_10, radioGroup: 'bm' },
             {label: "World Boundaries and Places", layer: layer_WorldBoundariesandPlaces_9, radioGroup: 'bm' },
-            {label: "National Geographic", layer: layer_NationalGeographic_8},
-            {label: "World Street Map", layer: layer_WorldStreetMap_7},
-            {label: "World Terrain", layer: layer_WorldTerrain_6},
-            {label: "World Imagery", layer: layer_WorldImagery_5},
-            {label: "Google Terrain Hybrid", layer: layer_GoogleTerrainHybrid_4},
-            {label: "Google Terrain", layer: layer_GoogleTerrain_3},
-            {label: "Google Satellite Hybrid", layer: layer_GoogleSatelliteHybrid_2},
+            {label: "National Geographic", layer: layer_NationalGeographic_8, radioGroup: 'bm' },
+            {label: "World Street Map", layer: layer_WorldStreetMap_7, radioGroup: 'bm' },
+            {label: "World Terrain", layer: layer_WorldTerrain_6, radioGroup: 'bm' },
+            {label: "World Imagery", layer: layer_WorldImagery_5, radioGroup: 'bm' },
+            {label: "Google Terrain Hybrid", layer: layer_GoogleTerrainHybrid_4, radioGroup: 'bm' },
+            {label: "Google Terrain", layer: layer_GoogleTerrain_3, radioGroup: 'bm' },
+            {label: "Google Satellite Hybrid", layer: layer_GoogleSatelliteHybrid_2, radioGroup: 'bm' },
             {label: "Google Satellite", layer: layer_GoogleSatellite_1},
-            {label: "Google Maps", layer: layer_GoogleMaps_0},]
+            {label: "Google Maps", layer: layer_GoogleMaps_0, radioGroup: 'bm' },]
         var lay = L.control.layers.tree(null, overlaysTree,{
             //namedToggle: true,
             //selectorBack: false,
@@ -1124,6 +1127,13 @@
         });
         lay.addTo(map);
         setBounds();
+        map.addControl(new L.Control.Search({
+            layer: layer_EastSingbhumVillage_26,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'NAME'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
         L.ImageOverlay.include({
             getBounds: function () {
                 return this._bounds;
